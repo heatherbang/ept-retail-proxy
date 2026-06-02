@@ -8,18 +8,19 @@ export default async function handler(req, res) {
 
   try {
     const { messages, system } = req.body;
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'gpt-4o-mini',
         max_tokens: 1000,
-        system: system || '',
-        messages: messages || [],
+        messages: [
+          { role: 'system', content: system || '' },
+          ...messages
+        ],
       }),
     });
     const data = await response.json();
